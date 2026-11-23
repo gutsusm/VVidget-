@@ -1,752 +1,100 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Position Size Calculator</title>
-
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Position Size Calculator</title>
 <style>
 :root{--bg:#111216;--p:#191b20;--p2:#20232a;--line:#343842;--muted:#9299a4;--txt:#eef0f3;--green:#83c9a5;--red:#ef8888;--gold:#d8bd78}
-*{box-sizing:border-box}
-body{margin:0;padding:8px;background:transparent;color:var(--txt);font:13px Arial,sans-serif}
-.app{max-width:1120px;margin:auto;padding:14px;background:var(--bg);border:1px solid #2b2e35;border-radius:13px;box-shadow:0 12px 35px #0005}
-.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}
-.brand{font-size:12px;font-weight:bold;letter-spacing:1.7px}
-.topright{display:flex;gap:8px;align-items:center}
-.status,.live{font-size:9px;color:var(--muted)}
-button,input{font:inherit}
-.row{display:grid;gap:10px;align-items:end}
-.mainrow{grid-template-columns:1.1fr .8fr 1.25fr 1.35fr}
-.prices{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:11px}
-.field{min-width:0}
-.label{display:flex;justify-content:space-between;gap:6px;margin:0 0 6px;color:var(--muted);font-size:9px;font-weight:bold;letter-spacing:1px;text-transform:uppercase}
-.control,.selectbtn{width:100%;height:36px;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--p);color:var(--txt);padding:0 9px;outline:none}
-.control:focus,.selectbtn:focus{border-color:#818894}
-.selectwrap{position:relative}
-.selectbtn{display:flex;align-items:center;justify-content:space-between;text-align:left;cursor:pointer}
-.chosen{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.drop{display:none;position:absolute;z-index:20;top:40px;left:0;width:min(330px,88vw);max-height:330px;overflow:auto;padding:8px;background:#1b1e24;border:1px solid #414651;border-radius:9px;box-shadow:0 15px 35px #000b}
-.drop.open{display:block}
-.search{width:100%;height:33px;margin-bottom:7px;background:#101217;color:white;border:1px solid var(--line);border-radius:7px;padding:0 9px}
-.group{padding:8px 6px 4px;color:#78818e;font-size:9px;font-weight:bold;letter-spacing:1px}
-.item{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;padding:7px;border:0;border-radius:6px;background:transparent;color:var(--txt);text-align:left;cursor:pointer}
-.item:hover,.item.sel{background:#2a2e36}
-.star{border:0;background:none;color:#626a76;font-size:16px;cursor:pointer}
-.star.on{color:var(--gold)}
-.risks{display:flex;gap:5px}
-.risk{flex:1;min-width:0;height:36px;padding:0 5px;border:1px solid var(--line);border-radius:7px;background:var(--p);color:#cbd0d7;cursor:pointer;font-size:11px}
-.risk.active{background:#e9ebee;color:#111318;font-weight:bold}
-.custom{width:62px;flex:0 0 62px;text-align:center;padding:0 4px}
-.pricehead{display:flex;justify-content:space-between}
-.refresh{border:0;background:none;color:#cbd0d7;cursor:pointer;padding:0 3px}
-.result{display:grid;grid-template-columns:1fr 2.4fr auto;gap:14px;align-items:center;margin-top:13px;padding:14px;border:1px solid #373c46;border-radius:10px;background:linear-gradient(120deg,#1d2026,#17191e)}
-.lotlabel{font-size:9px;color:var(--muted);font-weight:bold;letter-spacing:1.4px}
-.lot{font-size:34px;font-weight:bold;margin-top:4px;white-space:nowrap}
-.lot small{font-size:11px;color:var(--muted)}
-.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 14px}
-.metric span{display:block;color:var(--muted);font-size:9px;margin-bottom:3px}
-.metric strong{font-size:13px;white-space:nowrap}
-.copy{height:36px;padding:0 12px;border:1px solid #eee;border-radius:8px;background:#eee;color:#111;font-weight:bold;cursor:pointer}
-.msg{min-height:15px;margin-top:8px;color:var(--muted);font-size:10px}
-.msg.err{color:var(--red)}
-.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:6px;color:#747b86;font-size:9px}
-.settings{display:none;margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:9px;background:#15171c}
-.settings.open{display:block}
-.settingsgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:9px}
-.note{margin-top:8px;color:var(--muted);font-size:10px;line-height:1.5}
-.actions{display:flex;justify-content:flex-end;gap:7px;margin-top:9px}
-.secondary,.gear{border:1px solid var(--line);border-radius:7px;background:var(--p2);color:var(--txt);padding:7px 10px;cursor:pointer}
-.gear{padding:6px 9px;font-size:15px}
-
-@media(max-width:760px){
-.mainrow{grid-template-columns:1fr 1fr}
-.assetfield,.riskfield{grid-column:1/-1}
-.result{grid-template-columns:1fr auto}
-.metrics{grid-column:1/-1;grid-row:2}
-.settingsgrid{grid-template-columns:1fr 1fr}
-}
-
-@media(max-width:420px){
-body{padding:3px}
-.app{padding:10px}
-.label{font-size:8px;letter-spacing:.7px}
-.control,.selectbtn,.risk{height:34px}
-.risks{gap:3px}
-.risk{font-size:10px;padding:0 3px}
-.custom{width:54px;flex-basis:54px}
-.result{padding:10px;gap:8px}
-.lot{font-size:28px}
-.metrics{gap:8px 6px}
-.metric strong{font-size:11px}
-.copy{padding:0 8px;font-size:10px}
-}
-</style>
-</head>
-
-<body>
+*{box-sizing:border-box}body{margin:0;padding:8px;background:transparent;color:var(--txt);font:12px Arial,sans-serif}.app{max-width:1120px;margin:auto;padding:12px;background:var(--bg);border:1px solid #2b2e35;border-radius:13px;box-shadow:0 12px 35px #0005}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.brand{font-size:11px;font-weight:bold;letter-spacing:1.5px}.topright{display:flex;gap:8px;align-items:center}.status,.live{font-size:9px;color:var(--muted)}button,input{font:inherit}
+.workspace{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(290px,1fr);gap:12px;align-items:stretch}.inputs-panel{min-width:0;display:flex;flex-direction:column;gap:10px}.row{display:grid;gap:7px;align-items:end}.mainrow{grid-template-columns:repeat(4,minmax(0,1fr))}.prices{grid-template-columns:repeat(3,minmax(0,1fr))}.field{min-width:0}.label{display:flex;justify-content:space-between;gap:5px;margin:0 0 4px;color:var(--muted);font-size:8px;font-weight:bold;letter-spacing:.75px;text-transform:uppercase;white-space:nowrap}
+.control,.selectbtn{width:100%;height:29px;min-width:0;border:1px solid var(--line);border-radius:6px;background:var(--p);color:var(--txt);padding:0 6px;outline:none;font-size:11px}.control:focus,.selectbtn:focus{border-color:#818894}.selectwrap{position:relative}.selectbtn{display:flex;align-items:center;justify-content:space-between;text-align:left;cursor:pointer;gap:4px}.chosen{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.drop{display:none;position:absolute;z-index:20;top:33px;left:0;width:min(330px,88vw);max-height:330px;overflow:auto;padding:8px;background:#1b1e24;border:1px solid #414651;border-radius:9px;box-shadow:0 15px 35px #000b}.drop.open{display:block}.search{width:100%;height:31px;margin-bottom:7px;background:#101217;color:white;border:1px solid var(--line);border-radius:7px;padding:0 8px}.group{padding:8px 6px 4px;color:#78818e;font-size:9px;font-weight:bold;letter-spacing:1px}.item{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;padding:7px;border:0;border-radius:6px;background:transparent;color:var(--txt);text-align:left;cursor:pointer}.item:hover,.item.sel{background:#2a2e36}.star{border:0;background:none;color:#626a76;font-size:16px;cursor:pointer}.star.on{color:var(--gold)}
+.risks{display:flex;gap:3px}.risk{flex:1;min-width:0;height:29px;padding:0 3px;border:1px solid var(--line);border-radius:5px;background:var(--p);color:#cbd0d7;cursor:pointer;font-size:10px}.risk.active{background:#e9ebee;color:#111318;font-weight:bold}.custom{width:48px;flex:0 0 48px;text-align:center;padding:0 3px}.refresh{border:0;background:none;color:#cbd0d7;cursor:pointer;padding:0 2px}
+.result{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:12px;margin:0;padding:13px;border:1px solid #373c46;border-radius:10px;background:linear-gradient(120deg,#1d2026,#17191e)}.lotlabel{font-size:9px;color:var(--muted);font-weight:bold;letter-spacing:1.2px}.lot{font-size:30px;font-weight:bold;margin-top:3px;white-space:nowrap}.lot small{font-size:10px;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}.metric{min-width:0}.metric span{display:block;color:var(--muted);font-size:8px;margin-bottom:3px}.metric strong{font-size:12px;white-space:nowrap}.copy{align-self:flex-start;height:29px;padding:0 11px;border:1px solid #eee;border-radius:6px;background:#eee;color:#111;font-weight:bold;font-size:10px;cursor:pointer}
+.msg{display:none}.foot{display:none}.settings{display:none;margin-top:11px;padding:11px;border:1px solid var(--line);border-radius:9px;background:#15171c}.settings.open{display:block}.settingsgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:8px}.note{margin-top:8px;color:var(--muted);font-size:10px;line-height:1.5}.actions{display:flex;justify-content:flex-end;gap:7px;margin-top:9px}.secondary,.gear{border:1px solid var(--line);border-radius:6px;background:var(--p2);color:var(--txt);padding:6px 9px;cursor:pointer}.gear{padding:5px 8px;font-size:14px}
+@media(max-width:760px){.workspace{grid-template-columns:1fr}.mainrow{grid-template-columns:repeat(2,minmax(0,1fr))}.result{display:grid;grid-template-columns:1fr 2fr;align-items:center}.metrics{grid-column:2;grid-row:1/3}.copy{grid-column:1}.settingsgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){body{padding:3px}.app{padding:9px}.label{font-size:7px;letter-spacing:.5px}.control,.selectbtn,.risk{height:28px;font-size:10px}.risks{gap:2px}.risk{font-size:9px;padding:0 2px}.custom{width:42px;flex-basis:42px}.prices{gap:5px}.result{padding:9px;gap:8px}.lot{font-size:25px}.metrics{gap:8px 6px}.metric strong{font-size:10px}.copy{padding:0 8px;font-size:9px}}
+</style></head><body>
 <div class="app">
-
-<div class="top">
-<div class="brand">POSITION SIZE CALCULATOR</div>
-<div class="topright">
-<span class="status" id="apiStatus">PRICE FEED NOT CONNECTED</span>
-<button class="gear" id="gear">⚙</button>
+ <div class="top"><div class="brand">POSITION SIZE CALCULATOR</div><div class="topright"><span class="status" id="apiStatus">PRICE FEED NOT CONNECTED</span><button class="gear" id="gear">⚙</button></div></div>
+ <div class="workspace">
+  <div class="inputs-panel">
+ <div class="row mainrow">
+  <div class="field"><div class="label">PROP FIRM</div><div class="selectwrap" id="firmwrap"><button class="selectbtn" id="firmbtn"><span class="chosen" id="firmname">Select prop firm</span><span>▾</span></button><div class="drop" id="firmdrop"><input class="search" id="firmsearch" placeholder="Search prop firm..."><div id="firmitems"></div></div></div></div>
+  <div class="field"><div class="label">ACCOUNT BALANCE · USD</div><input class="control" id="balance" type="number" value="10000" min="0"></div>
+  <div class="field assetfield"><div class="label">TRADING ASSET</div><div class="selectwrap" id="assetwrap"><button class="selectbtn" id="assetbtn"><span class="chosen" id="assetname">EURUSD</span><span>▾</span></button><div class="drop" id="assetdrop"><input class="search" id="assetsearch" placeholder="Search instrument..."><div id="assetitems"></div></div></div></div>
+  <div class="field riskfield"><div class="label">RISK PER TRADE</div><div class="risks"><button class="risk" data-risk="0.5">0.5%</button><button class="risk active" data-risk="1">1%</button><button class="risk" data-risk="2">2%</button><button class="risk" data-risk="3">3%</button><input class="control custom" id="customrisk" type="number" min=".01" step=".01" placeholder="Custom"></div></div>
+ </div>
+ <div class="row prices">
+  <div class="field"><div class="label"><span>ENTRY PRICE</span><span><span class="live" id="pricestate">MANUAL</span> <button class="refresh" id="refresh" title="Refresh quote">↻</button></span></div><input class="control" id="entry" type="number" step="any" placeholder="Entry price"></div>
+  <div class="field"><div class="label">STOP LOSS</div><input class="control" id="sl" type="number" step="any" placeholder="Stop loss"></div>
+  <div class="field"><div class="label">TAKE PROFIT</div><input class="control" id="tp" type="number" step="any" placeholder="Take profit"></div>
+ </div>
+  </div>
+ <div class="result"><div><div class="lotlabel">POSITION SIZE</div><div class="lot" id="lot">— <small>LOT</small></div></div><div class="metrics">
+  <div class="metric"><span>Risk Amount</span><strong id="riskamount">—</strong></div><div class="metric"><span>Estimated Commission</span><strong id="fee">Not set</strong></div><div class="metric"><span>Total Estimated Risk</span><strong id="totalrisk">—</strong></div>
+  <div class="metric"><span>SL Distance</span><strong id="distance">—</strong></div><div class="metric"><span>Risk / Reward</span><strong id="rr">—</strong></div><div class="metric"><span>Potential Profit</span><strong id="profit">—</strong></div>
+ </div><button class="copy" id="copy">COPY LOT</button></div>
+ </div>
+ <div class="msg" id="msg" aria-hidden="true"></div>
+ <div class="settings" id="settings"><div class="label" style="margin-bottom:10px">DATA & CALCULATION SETTINGS</div><div class="settingsgrid">
+  <div class="field"><div class="label">TWELVE DATA API KEY</div><input class="control" id="apikey" type="password" placeholder="Paste API key"></div>
+  <div class="field"><div class="label">COMMISSION · USD / LOT ROUND TURN</div><input class="control" id="commission" type="number" min="0" step=".01" placeholder="Not configured"></div>
+  <div class="field"><div class="label">CONTRACT SIZE</div><input class="control" id="contract" type="number" min="0" step="any" placeholder="Built-in / custom"></div>
+  <div class="field"><div class="label">VOLUME STEP</div><input class="control" id="step" type="number" min=".000001" step="any" value=".01"></div>
+ </div><div class="note">Your API key is stored in this browser's local storage. Do not share an HTML copy with the key entered. Twelve Data coverage depends on your plan. Index symbols are not currently mapped to Twelve Data quotes and must be entered manually. Built-in contract sizes are generic assumptions, not verified FundingPips/broker specifications. Confirm contract size, volume step and commission in your MT5 symbol specification. Values entered here override built-in assumptions.</div><div class="actions"><button class="secondary" id="clear">Clear API key</button><button class="secondary" id="save">Save settings</button></div></div>
 </div>
-</div>
-
-<div class="row mainrow">
-
-<div class="field">
-<div class="label">PROP FIRM</div>
-<div class="selectwrap" id="firmwrap">
-<button class="selectbtn" id="firmbtn">
-<span class="chosen" id="firmname">Select prop firm</span>
-<span>▾</span>
-</button>
-<div class="drop" id="firmdrop">
-<input class="search" id="firmsearch" placeholder="Search prop firm...">
-<div id="firmitems"></div>
-</div>
-</div>
-</div>
-
-<div class="field">
-<div class="label">ACCOUNT BALANCE · USD</div>
-<input class="control" id="balance" type="number" value="10000" min="0">
-</div>
-
-<div class="field assetfield">
-<div class="label">TRADING ASSET</div>
-<div class="selectwrap" id="assetwrap">
-<button class="selectbtn" id="assetbtn">
-<span class="chosen" id="assetname">EURUSD</span>
-<span>▾</span>
-</button>
-<div class="drop" id="assetdrop">
-<input class="search" id="assetsearch" placeholder="Search instrument...">
-<div id="assetitems"></div>
-</div>
-</div>
-</div>
-
-<div class="field riskfield">
-<div class="label">RISK PER TRADE</div>
-<div class="risks">
-<button class="risk" data-risk="0.5">0.5%</button>
-<button class="risk active" data-risk="1">1%</button>
-<button class="risk" data-risk="2">2%</button>
-<button class="risk" data-risk="3">3%</button>
-<input class="control custom" id="customrisk" type="number" min=".01" step=".01" placeholder="Custom">
-</div>
-</div>
-
-</div>
-
-<div class="row prices">
-
-<div class="field">
-<div class="label">
-<span>ENTRY PRICE</span>
-<span>
-<span class="live" id="pricestate">MANUAL</span>
-<button class="refresh" id="refresh" title="Refresh quote">↻</button>
-</span>
-</div>
-<input class="control" id="entry" type="number" step="any" placeholder="Entry price">
-</div>
-
-<div class="field">
-<div class="label">STOP LOSS</div>
-<input class="control" id="sl" type="number" step="any" placeholder="Stop loss">
-</div>
-
-<div class="field">
-<div class="label">TAKE PROFIT</div>
-<input class="control" id="tp" type="number" step="any" placeholder="Take profit">
-</div>
-
-</div>
-
-<div class="result">
-
-<div>
-<div class="lotlabel">POSITION SIZE</div>
-<div class="lot" id="lot">— <small>LOT</small></div>
-</div>
-
-<div class="metrics">
-
-<div class="metric">
-<span>Risk Amount</span>
-<strong id="riskamount">—</strong>
-</div>
-
-<div class="metric">
-<span>Estimated Commission</span>
-<strong id="fee">Not set</strong>
-</div>
-
-<div class="metric">
-<span>Total Estimated Risk</span>
-<strong id="totalrisk">—</strong>
-</div>
-
-<div class="metric">
-<span>SL Distance</span>
-<strong id="distance">—</strong>
-</div>
-
-<div class="metric">
-<span>Risk / Reward</span>
-<strong id="rr">—</strong>
-</div>
-
-<div class="metric">
-<span>Potential Profit</span>
-<strong id="profit">—</strong>
-</div>
-
-</div>
-
-<button class="copy" id="copy">COPY LOT</button>
-
-</div>
-
-<div class="msg" id="msg">
-Choose an instrument, enter SL and TP, then calculate your position size.
-</div>
-
-<div class="settings" id="settings">
-
-<div class="label" style="margin-bottom:10px">
-DATA & CALCULATION SETTINGS
-</div>
-
-<div class="settingsgrid">
-
-<div class="field">
-<div class="label">TWELVE DATA API KEY</div>
-<input class="control" id="apikey" type="password" placeholder="Paste API key">
-</div>
-
-<div class="field">
-<div class="label">COMMISSION · USD / LOT ROUND TURN</div>
-<input class="control" id="commission" type="number" min="0" step=".01" placeholder="Not configured">
-</div>
-
-<div class="field">
-<div class="label">CONTRACT SIZE</div>
-<input class="control" id="contract" type="number" min="0" step="any" placeholder="Built-in / custom">
-</div>
-
-<div class="field">
-<div class="label">VOLUME STEP</div>
-<input class="control" id="step" type="number" min=".000001" step="any" value=".01">
-</div>
-
-</div>
-
-<div class="note">
-Your API key is stored in this browser's local storage. Do not share an HTML copy with the key entered. Twelve Data coverage depends on your plan. Index symbols are not currently mapped to Twelve Data quotes and must be entered manually. Built-in contract sizes are generic assumptions, not verified FundingPips/broker specifications. Confirm contract size, volume step and commission in your MT5 symbol specification. Values entered here override built-in assumptions.
-</div>
-
-<div class="actions">
-<button class="secondary" id="clear">Clear API key</button>
-<button class="secondary" id="save">Save settings</button>
-</div>
-
-</div>
-
-<div class="foot">
-<span id="feedfoot">Twelve Data · indicative prices, not FundingPips MT5 quotes</span>
-<span>Entry / SL / TP are not saved</span>
-</div>
-
-</div>
-
 <script>
-
 const $=id=>document.getElementById(id),KEY="psc_v4";
-
-const firms=[
-"FundingPips","FTMO","FundedNext","The5ers",
-"Alpha Capital","FXIFY","Blue Guardian","E8 Markets","Maven Trading"
-];
-
+const firms=["FundingPips","FTMO","FundedNext","The5ers","Alpha Capital","FXIFY","Blue Guardian","E8 Markets","Maven Trading"];
 const A=[
-["EURUSD","Forex Majors","EUR/USD","fx",100000],
-["GBPUSD","Forex Majors","GBP/USD","fx",100000],
-["USDJPY","Forex Majors","USD/JPY","fx",100000],
-["AUDUSD","Forex Majors","AUD/USD","fx",100000],
-["NZDUSD","Forex Majors","NZD/USD","fx",100000],
-["USDCAD","Forex Majors","USD/CAD","fx",100000],
-["USDCHF","Forex Majors","USD/CHF","fx",100000],
-
-["EURGBP","Forex Crosses","EUR/GBP","fx",100000],
-["EURJPY","Forex Crosses","EUR/JPY","fx",100000],
-["GBPJPY","Forex Crosses","GBP/JPY","fx",100000],
-["AUDJPY","Forex Crosses","AUD/JPY","fx",100000],
-["EURCHF","Forex Crosses","EUR/CHF","fx",100000],
-["GBPCAD","Forex Crosses","GBP/CAD","fx",100000],
-["EURAUD","Forex Crosses","EUR/AUD","fx",100000],
-
-["XAUUSD","Metals","XAU/USD","metal",100],
-["XAGUSD","Metals","XAG/USD","metal",5000],
-["XPTUSD","Metals","XPT/USD","metal",null],
-["XPDUSD","Metals","XPD/USD","metal",null],
-
-["US30","Indices","","manual",null],
-["NAS100","Indices","","manual",null],
-["SPX500","Indices","","manual",null],
-["GER40","Indices","","manual",null],
-["UK100","Indices","","manual",null],
-["JP225","Indices","","manual",null],
-
-["BTCUSD","Crypto","BTC/USD","crypto",1],
-["ETHUSD","Crypto","ETH/USD","crypto",1],
-["LTCUSD","Crypto","LTC/USD","crypto",1],
-["XRPUSD","Crypto","XRP/USD","crypto",1],
-
-["USOIL","Energies","WTI/USD","energy",null],
-["UKOIL","Energies","BRENT/USD","energy",null]
+["EURUSD","Forex Majors","EUR/USD","fx",100000],["GBPUSD","Forex Majors","GBP/USD","fx",100000],["USDJPY","Forex Majors","USD/JPY","fx",100000],["AUDUSD","Forex Majors","AUD/USD","fx",100000],["NZDUSD","Forex Majors","NZD/USD","fx",100000],["USDCAD","Forex Majors","USD/CAD","fx",100000],["USDCHF","Forex Majors","USD/CHF","fx",100000],
+["EURGBP","Forex Crosses","EUR/GBP","fx",100000],["EURJPY","Forex Crosses","EUR/JPY","fx",100000],["GBPJPY","Forex Crosses","GBP/JPY","fx",100000],["AUDJPY","Forex Crosses","AUD/JPY","fx",100000],["EURCHF","Forex Crosses","EUR/CHF","fx",100000],["GBPCAD","Forex Crosses","GBP/CAD","fx",100000],["EURAUD","Forex Crosses","EUR/AUD","fx",100000],
+["XAUUSD","Metals","XAU/USD","metal",100],["XAGUSD","Metals","XAG/USD","metal",5000],["XPTUSD","Metals","XPT/USD","metal",null],["XPDUSD","Metals","XPD/USD","metal",null],
+["US30","Indices","","manual",null],["NAS100","Indices","","manual",null],["SPX500","Indices","","manual",null],["GER40","Indices","","manual",null],["UK100","Indices","","manual",null],["JP225","Indices","","manual",null],
+["BTCUSD","Crypto","BTC/USD","crypto",1],["ETHUSD","Crypto","ETH/USD","crypto",1],["LTCUSD","Crypto","LTC/USD","crypto",1],["XRPUSD","Crypto","XRP/USD","crypto",1],
+["USOIL","Energies","WTI/USD","energy",null],["UKOIL","Energies","BRENT/USD","energy",null]
 ];
-
-let S={};
-try{
-S=JSON.parse(localStorage.getItem(KEY)||"{}")
-}catch(e){}
-
-let firm=S.firm||"",
-asset=S.asset||"EURUSD",
-risk=Number(S.risk||1),
-ff=S.ff||[],
-af=S.af||[],
-manual=false,
-lastQuote=null;
-
-const groups=[
-"Forex Majors","Forex Crosses","Metals",
-"Indices","Energies","Crypto"
-];
-
-function persist(){
-localStorage.setItem(KEY,JSON.stringify({
-firm,asset,risk,ff,af,
-balance:$("balance").value,
-apikey:$("apikey").value,
-commission:$("commission").value,
-contract:$("contract").value,
-step:$("step").value
-}));
-}
-
-function renderF(){
-let q=$("firmsearch").value.toLowerCase(),
-list=firms.filter(x=>x.toLowerCase().includes(q))
-.sort((a,b)=>Number(ff.includes(b))-Number(ff.includes(a)));
-
-$("firmitems").innerHTML=list.map(x=>
-`<div class="item" data-f="${x}">
-<span>${x}</span>
-<button class="star ${ff.includes(x)?"on":""}" data-fstar="${x}">★</button>
-</div>`
-).join("")||'<div class="group">No matches</div>';
-}
-
-function renderA(){
-let q=$("assetsearch").value.toLowerCase(),
-list=A.filter(x=>(x[0]+x[1]+x[2]).toLowerCase().includes(q))
-.sort((a,b)=>Number(af.includes(b[0]))-Number(af.includes(a[0]))),
-out="";
-
-groups.forEach(g=>{
-let z=list.filter(x=>x[1]===g);
-if(z.length)
-out+=`<div class="group">${g}</div>`+
-z.map(x=>`<div class="item ${x[0]===asset?"sel":""}" data-a="${x[0]}">
-<span>${x[0]}</span>
-<button class="star ${af.includes(x[0])?"on":""}" data-astar="${x[0]}">★</button>
-</div>`).join("");
-});
-
-$("assetitems").innerHTML=out||'<div class="group">No matches</div>';
-}
-
-function toggle(id,search){
-$(id).classList.toggle("open");
-if($(id).classList.contains("open")){
-$(search).value="";
-$(search).focus();
-}
-}
-
-$("firmbtn").onclick=()=>{
-$("assetdrop").classList.remove("open");
-toggle("firmdrop","firmsearch")
-};
-
-$("assetbtn").onclick=()=>{
-$("firmdrop").classList.remove("open");
-toggle("assetdrop","assetsearch")
-};
-
-document.addEventListener("click",e=>{
-if(!$("firmwrap").contains(e.target))
-$("firmdrop").classList.remove("open");
-
-if(!$("assetwrap").contains(e.target))
-$("assetdrop").classList.remove("open");
-});
-
-$("firmsearch").oninput=renderF;
-$("assetsearch").oninput=renderA;
-
-$("firmitems").onclick=e=>{
-let st=e.target.closest("[data-fstar]");
-
-if(st){
-let n=st.dataset.fstar;
-ff=ff.includes(n)?ff.filter(x=>x!==n):[...ff,n];
-renderF();
-persist();
-return;
-}
-
-let it=e.target.closest("[data-f]");
-
-if(it){
-firm=it.dataset.f;
-$("firmname").textContent=firm;
-$("firmdrop").classList.remove("open");
-$("commission").value="";
-persist();
-calc();
-}
-};
-
-$("assetitems").onclick=e=>{
-let st=e.target.closest("[data-astar]");
-
-if(st){
-let n=st.dataset.astar;
-af=af.includes(n)?af.filter(x=>x!==n):[...af,n];
-renderA();
-persist();
-return;
-}
-
-let it=e.target.closest("[data-a]");
-
-if(it){
-asset=it.dataset.a;
-$("assetname").textContent=asset;
-$("assetdrop").classList.remove("open");
-manual=false;
-lastQuote=null;
-$("entry").value="";
-loadAsset();
-quote();
-calc();
-persist();
-}
-};
-
-function setRisk(v,custom=false){
-risk=Number(v)||0;
-
-document.querySelectorAll("[data-risk]").forEach(b=>
-b.classList.toggle("active",!custom&&Number(b.dataset.risk)===risk)
-);
-
-if(!custom)$("customrisk").value="";
-
-persist();
-calc();
-}
-
-document.querySelectorAll("[data-risk]").forEach(b=>
-b.onclick=()=>setRisk(b.dataset.risk)
-);
-
-$("customrisk").oninput=()=>{
-document.querySelectorAll("[data-risk]").forEach(b=>
-b.classList.remove("active")
-);
-
-risk=Number($("customrisk").value);
-persist();
-calc();
-};
-
-function spec(){
-return A.find(x=>x[0]===asset)||A[0];
-}
-
-async function price(sym){
-let k=$("apikey").value.trim();
-
-if(!k)
-throw Error("Add your Twelve Data API key in Settings.");
-
-let r=await fetch(
-"https://api.twelvedata.com/price?symbol="+
-encodeURIComponent(sym)+"&apikey="+encodeURIComponent(k)
-);
-
-if(!r.ok)throw Error("API HTTP "+r.status);
-
-let j=await r.json();
-
-if(j.status==="error"||j.code||!j.price)
-throw Error(j.message||j.msg||"Quote unavailable for "+sym);
-
-let n=Number(j.price);
-
-if(!(n>0))throw Error("Invalid quote received.");
-
-return n;
-}
-
-async function quote(){
-let a=spec();
-
-if(!a[2]){
-$("pricestate").textContent="MANUAL ONLY";
-$("apiStatus").textContent="PARTIAL COVERAGE";
-return;
-}
-
-$("pricestate").textContent="LOADING";
-
-try{
-let p=await price(a[2]);
-lastQuote=p;
-
-if(!manual)$("entry").value=p;
-
-$("pricestate").textContent=manual?"LIVE · MANUAL ENTRY":"LIVE";
-$("apiStatus").textContent="PRICE FEED CONNECTED";
-$("feedfoot").textContent="Twelve Data · "+a[2]+" · "+new Date().toLocaleTimeString();
-
-$("msg").textContent="Indicative quote loaded. Check the price against MT5 before trading.";
-
-calc();
-
-}catch(e){
-$("pricestate").textContent="UNAVAILABLE";
-$("apiStatus").textContent="FEED ISSUE";
-message(e.message,true);
-}
-}
-
-function message(t,err=false){
-$("msg").textContent=t;
-$("msg").className="msg"+(err?" err":"");
-}
-
-$("refresh").onclick=quote;
-
-$("entry").oninput=()=>{
-manual=true;
-$("pricestate").textContent="MANUAL";
-calc();
-};
-
-function money(n){
-return "$"+n.toLocaleString("en-US",{
-minimumFractionDigits:2,
-maximumFractionDigits:2
-});
-}
-
-async function convert(cur){
-if(cur==="USD")return 1;
-
-try{
-return await price(cur+"/USD");
-}catch(e){
-try{
-return 1/(await price("USD/"+cur));
-}catch(e2){
-throw Error("Cannot retrieve "+cur+"/USD conversion; calculation stopped to avoid a wrong lot size.");
-}
-}
-}
-
+let S={};try{S=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+let firm=S.firm||"",asset=S.asset||"EURUSD",risk=Number(S.risk||1),ff=S.ff||[],af=S.af||[],manual=false,lastQuote=null;
+const groups=["Forex Majors","Forex Crosses","Metals","Indices","Energies","Crypto"];
+function persist(){localStorage.setItem(KEY,JSON.stringify({firm,asset,risk,ff,af,balance:$("balance").value,apikey:$("apikey").value,commission:$("commission").value,contract:$("contract").value,step:$("step").value}));}
+function renderF(){let q=$("firmsearch").value.toLowerCase(),list=firms.filter(x=>x.toLowerCase().includes(q)).sort((a,b)=>Number(ff.includes(b))-Number(ff.includes(a)));$("firmitems").innerHTML=list.map(x=>`<div class="item" data-f="${x}"><span>${x}</span><button class="star ${ff.includes(x)?"on":""}" data-fstar="${x}">★</button></div>`).join("")||'<div class="group">No matches</div>';}
+function renderA(){let q=$("assetsearch").value.toLowerCase(),list=A.filter(x=>(x[0]+x[1]+x[2]).toLowerCase().includes(q)).sort((a,b)=>Number(af.includes(b[0]))-Number(af.includes(a[0]))),out="";groups.forEach(g=>{let z=list.filter(x=>x[1]===g);if(z.length)out+=`<div class="group">${g}</div>`+z.map(x=>`<div class="item ${x[0]===asset?"sel":""}" data-a="${x[0]}"><span>${x[0]}</span><button class="star ${af.includes(x[0])?"on":""}" data-astar="${x[0]}">★</button></div>`).join("");});$("assetitems").innerHTML=out||'<div class="group">No matches</div>';}
+function toggle(id,search){$(id).classList.toggle("open");if($(id).classList.contains("open")){$(search).value="";$(search).focus();}}
+$("firmbtn").onclick=()=>{$("assetdrop").classList.remove("open");toggle("firmdrop","firmsearch")};$("assetbtn").onclick=()=>{$("firmdrop").classList.remove("open");toggle("assetdrop","assetsearch")};
+document.addEventListener("click",e=>{if(!$("firmwrap").contains(e.target))$("firmdrop").classList.remove("open");if(!$("assetwrap").contains(e.target))$("assetdrop").classList.remove("open")});
+$("firmsearch").oninput=renderF;$("assetsearch").oninput=renderA;
+$("firmitems").onclick=e=>{let st=e.target.closest("[data-fstar]");if(st){let n=st.dataset.fstar;ff=ff.includes(n)?ff.filter(x=>x!==n):[...ff,n];renderF();persist();return}let it=e.target.closest("[data-f]");if(it){firm=it.dataset.f;$("firmname").textContent=firm;$("firmdrop").classList.remove("open");$("commission").value="";persist();calc();}};
+$("assetitems").onclick=e=>{let st=e.target.closest("[data-astar]");if(st){let n=st.dataset.astar;af=af.includes(n)?af.filter(x=>x!==n):[...af,n];renderA();persist();return}let it=e.target.closest("[data-a]");if(it){asset=it.dataset.a;$("assetname").textContent=asset;$("assetdrop").classList.remove("open");manual=false;lastQuote=null;$("entry").value="";quote();calc();persist();}};
+function setRisk(v,custom=false){risk=Number(v)||0;document.querySelectorAll("[data-risk]").forEach(b=>b.classList.toggle("active",!custom&&Number(b.dataset.risk)===risk));if(!custom)$("customrisk").value="";persist();calc();}
+document.querySelectorAll("[data-risk]").forEach(b=>b.onclick=()=>setRisk(b.dataset.risk));$("customrisk").oninput=()=>{document.querySelectorAll("[data-risk]").forEach(b=>b.classList.remove("active"));risk=Number($("customrisk").value);persist();calc();};
+function spec(){return A.find(x=>x[0]===asset)||A[0];}
+async function price(sym){let k=$("apikey").value.trim();if(!k)throw Error("Add your Twelve Data API key in Settings.");let r=await fetch("https://api.twelvedata.com/price?symbol="+encodeURIComponent(sym)+"&apikey="+encodeURIComponent(k));if(!r.ok)throw Error("API HTTP "+r.status);let j=await r.json();if(j.status==="error"||j.code||!j.price)throw Error(j.message||j.msg||"Quote unavailable for "+sym);let n=Number(j.price);if(!(n>0))throw Error("Invalid quote received.");return n;}
+async function quote(){let a=spec();if(!a[2]){$("pricestate").textContent="MANUAL ONLY";$("apiStatus").textContent="PARTIAL COVERAGE";return;}$("pricestate").textContent="LOADING";try{let p=await price(a[2]);lastQuote=p;if(!manual)$("entry").value=p;$("pricestate").textContent=manual?"LIVE · MANUAL ENTRY":"LIVE";$("apiStatus").textContent="PRICE FEED CONNECTED";$("msg").textContent="Indicative quote loaded. Check the price against MT5 before trading.";calc();}catch(e){$("pricestate").textContent="UNAVAILABLE";$("apiStatus").textContent="FEED ISSUE";message(e.message,true);}}
+function message(t,err=false){$("msg").textContent=t;$("msg").className="msg"+(err?" err":"");}
+$("refresh").onclick=quote;$("entry").oninput=()=>{manual=true;$("pricestate").textContent="MANUAL";calc();};
+function money(n){return "$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
+async function convert(cur){if(cur==="USD")return 1;try{return await price(cur+"/USD")}catch(e){try{return 1/(await price("USD/"+cur))}catch(e2){throw Error("Cannot retrieve "+cur+"/USD conversion; calculation stopped to avoid a wrong lot size.")}}}
 let calcId=0;
-
 async function calc(){
-
-let id=++calcId,
-a=spec(),
-bal=Number($("balance").value),
-en=Number($("entry").value),
-sl=Number($("sl").value),
-tp=Number($("tp").value),
-riskAmt=bal*risk/100,
-step=Number($("step").value)||.01;
-
-$("lot").innerHTML='— <small>LOT</small>';
-
-["totalrisk","distance","rr","profit"].forEach(x=>
-$(x).textContent="—"
-);
-
-$("riskamount").textContent=
-bal>0&&risk>0?money(riskAmt):"—";
-
-$("fee").textContent=
-$("commission").value===""?"Not set":"—";
-
-if(!(bal>0&&risk>0&&en>0&&sl>0)){
-message("Enter a valid Entry Price and Stop Loss to calculate.");
-return;
+ let id=++calcId,a=spec(),bal=Number($("balance").value),en=Number($("entry").value),sl=Number($("sl").value),tp=Number($("tp").value),riskAmt=bal*risk/100,step=Number($("step").value)||.01;
+ $("lot").innerHTML='— <small>LOT</small>';["totalrisk","distance","rr","profit"].forEach(x=>$(x).textContent="—");$("riskamount").textContent=bal>0&&risk>0?money(riskAmt):"—";$("fee").textContent=$("commission").value===""?"Not set":"—";
+ if(!(bal>0&&risk>0&&en>0&&sl>0)){message("Enter a valid Entry Price and Stop Loss to calculate.");return}if(en===sl){message("Entry and Stop Loss must be different.",true);return}
+ let contract=$("contract").value!==""?Number($("contract").value):a[4],dist=Math.abs(en-sl),conversion=1;
+ if(!(contract>0)){message("No verified contract size is available for this symbol. Enter the contract size in Settings from your MT5 symbol specification.",true);return}
+ if(a[3]==="fx"){try{conversion=await convert(a[2].split("/")[1])}catch(e){message(e.message,true);return}}
+ if(id!==calcId)return;
+ if(!["fx","metal","crypto"].includes(a[3])){message("This asset needs confirmed broker-specific contract/tick-value settings. A generic lot calculation would be unreliable.",true);return}
+ let riskLot=dist*contract*conversion,comm=$("commission").value===""?null:Number($("commission").value),lot=Math.floor((riskAmt/(riskLot+(comm||0)))/step+1e-9)*step,dig=Math.min(8,Math.max(0,(String(step).split(".")[1]||"").length)),fee=comm===null?null:lot*comm,total=lot*riskLot+(fee||0);
+ $("lot").innerHTML=lot.toFixed(dig)+' <small>LOT</small>';$("fee").textContent=fee===null?"Not set":money(fee);$("totalrisk").textContent=money(total)+(fee===null?"*":"");$("distance").textContent=dist.toFixed(a[3]==="fx"?(a[0].includes("JPY")?3:5):2)+" price";
+ $("rr").textContent=tp>0?"1:"+(Math.abs(tp-en)/dist).toFixed(2):"—";
+ $("profit").textContent=tp>0?money(Math.abs(tp-en)*contract*conversion*lot-(fee||0)):"—";
+ if(lot<=0)message("Calculated volume is below the selected volume step.",true);
+ else if(fee===null)message("Commission is not configured. Total risk excludes commission. Add your confirmed round-turn commission in Settings.",true);
+ else if(a[3]!=="fx"||a[0]==="XAUUSD"||a[0]==="XAGUSD")message("Estimate uses a generic contract-size assumption. Confirm it and the volume step in your prop firm's MT5 symbol specification.",true);
+ else message("Calculation complete. Confirm contract size, volume step and spread in MT5 before placing the trade.");
 }
-
-if(en===sl){
-message("Entry and Stop Loss must be different.",true);
-return;
-}
-
-let contract=$("contract").value!==""?
-Number($("contract").value):a[4],
-dist=Math.abs(en-sl),
-conversion=1;
-
-if(!(contract>0)){
-message("No verified contract size is available for this symbol. Enter the contract size in Settings from your MT5 symbol specification.",true);
-return;
-}
-
-if(a[3]==="fx"){
-try{
-conversion=await convert(a[2].split("/")[1]);
-}catch(e){
-message(e.message,true);
-return;
-}
-}
-
-if(id!==calcId)return;
-
-if(!["fx","metal","crypto"].includes(a[3])){
-message("This asset needs confirmed broker-specific contract/tick-value settings. A generic lot calculation would be unreliable.",true);
-return;
-}
-
-let riskLot=dist*contract*conversion,
-comm=$("commission").value===""?null:Number($("commission").value),
-lot=Math.floor((riskAmt/(riskLot+(comm||0)))/step+1e-9)*step,
-dig=Math.min(8,Math.max(0,(String(step).split(".")[1]||"").length)),
-fee=comm===null?null:lot*comm,
-total=lot*riskLot+(fee||0);
-
-$("lot").innerHTML=lot.toFixed(dig)+' <small>LOT</small>';
-$("fee").textContent=fee===null?"Not set":money(fee);
-$("totalrisk").textContent=money(total)+(fee===null?"*":"");
-
-$("distance").textContent=dist.toFixed(
-a[3]==="fx"?(a[0].includes("JPY")?3:5):2
-)+" price";
-
-$("rr").textContent=tp>0?
-"1:"+(Math.abs(tp-en)/dist).toFixed(2):"—";
-
-$("profit").textContent=tp>0?
-money(Math.abs(tp-en)*contract*conversion*lot-(fee||0)):"—";
-
-if(lot<=0)
-message("Calculated volume is below the selected volume step.",true);
-
-else if(fee===null)
-message("Commission is not configured. Total risk excludes commission. Add your confirmed round-turn commission in Settings.",true);
-
-else if(a[3]!=="fx"||a[0]==="XAUUSD"||a[0]==="XAGUSD")
-message("Estimate uses a generic contract-size assumption. Confirm it and the volume step in your prop firm's MT5 symbol specification.",true);
-
-else
-message("Calculation complete. Confirm contract size, volume step and spread in MT5 before placing the trade.");
-
-}
-
-["balance","sl","tp","commission","contract","step"].forEach(id=>
-$(id).addEventListener("input",()=>{
-persist();
-calc();
-})
-);
-
-$("gear").onclick=()=>
-$("settings").classList.toggle("open");
-
-$("save").onclick=()=>{
-persist();
-$("settings").classList.remove("open");
-message("Settings saved in this browser.");
-
-if($("apikey").value.trim())quote();
-
-calc();
-};
-
-$("clear").onclick=()=>{
-$("apikey").value="";
-persist();
-$("apiStatus").textContent="PRICE FEED NOT CONNECTED";
-message("API key cleared.");
-};
-
-$("apikey").onchange=persist;
-
-$("copy").onclick=async()=>{
-let t=$("lot").textContent.replace("LOT","").trim();
-
-if(!t||t.startsWith("—"))return;
-
-try{
-await navigator.clipboard.writeText(t);
-message("Lot size copied.");
-}catch(e){
-message("Clipboard unavailable. Copy the lot size manually.",true);
-}
-};
-
-function init(){
-
-$("balance").value=S.balance||10000;
-$("apikey").value=S.apikey||"";
-$("commission").value=S.commission||"";
-$("contract").value=S.contract||"";
-$("step").value=S.step||".01";
-
-$("firmname").textContent=firm||"Select prop firm";
-$("assetname").textContent=asset;
-
-$("customrisk").value=
-[.5,1,2,3].includes(risk)?"":risk;
-
-document.querySelectorAll("[data-risk]").forEach(b=>
-b.classList.toggle(
-"active",
-Number(b.dataset.risk)===risk&&$("customrisk").value===""
-)
-);
-
-renderF();
-renderA();
-
-if($("apikey").value){
-quote();
-setInterval(()=>{
-if(document.visibilityState==="visible")quote()
-},300000);
-}
-
-calc();
-}
-
+["balance","sl","tp","commission","contract","step"].forEach(id=>$(id).addEventListener("input",()=>{persist();calc()}));
+$("gear").onclick=()=>$("settings").classList.toggle("open");$("save").onclick=()=>{persist();$("settings").classList.remove("open");message("Settings saved in this browser.");if($("apikey").value.trim())quote();calc();};$("clear").onclick=()=>{$("apikey").value="";persist();$("apiStatus").textContent="PRICE FEED NOT CONNECTED";message("API key cleared.");};$("apikey").onchange=persist;
+$("copy").onclick=async()=>{let t=$("lot").textContent.replace("LOT","").trim();if(!t||t.startsWith("—"))return;try{await navigator.clipboard.writeText(t);message("Lot size copied.")}catch(e){message("Clipboard unavailable. Copy the lot size manually.",true)}};
+function init(){ $("balance").value=S.balance||10000;$("apikey").value=S.apikey||"";$("commission").value=S.commission||"";$("contract").value=S.contract||"";$("step").value=S.step||".01";$("firmname").textContent=firm||"Select prop firm";$("assetname").textContent=asset;$("customrisk").value=[.5,1,2,3].includes(risk)?"":risk;document.querySelectorAll("[data-risk]").forEach(b=>b.classList.toggle("active",Number(b.dataset.risk)===risk&&$("customrisk").value===""));renderF();renderA();if($("apikey").value){quote();setInterval(()=>{if(document.visibilityState==="visible")quote()},300000)}calc();}
 init();
-
-</script>
-</body>
-</html>
+</script></body></html>
