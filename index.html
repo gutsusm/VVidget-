@@ -7,9 +7,23 @@
 <style>
 :root{--bg:#111216;--p:#191b20;--p2:#20232a;--line:#343842;--muted:#9299a4;--txt:#eef0f3;--green:#83c9a5;--red:#ef8888;--gold:#d8bd78}
 *{box-sizing:border-box}
-html,body{background:transparent!important}
-html{margin:0;padding:0}
-body{margin:0;padding:5px;background:transparent!important;color:var(--txt);font:11px Arial,sans-serif;overflow-x:hidden;color-scheme:dark}
+
+/* Transparent iframe/page area: only the calculator card is painted. */
+html,body{
+ margin:0!important;
+ padding:0!important;
+ width:100%;
+ min-height:0!important;
+ background:transparent!important;
+ background-color:transparent!important;
+}
+html{overflow-x:hidden}
+body{
+ color:var(--txt);
+ font:11px Arial,sans-serif;
+ overflow-x:hidden;
+ color-scheme:dark;
+}
 .app{width:560px;max-width:none;margin:0 auto;padding:10px;background:var(--bg);border:1px solid #2b2e35;border-radius:12px;box-shadow:0 10px 28px #0005;transform-origin:top center}
 .top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
 .brand{font-size:10px;font-weight:bold;letter-spacing:1.35px}
@@ -20,7 +34,7 @@ button,input{font:inherit}
 .workspace{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,.95fr);gap:8px;align-items:stretch}
 .inputs-panel{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:8px}
 .row{display:grid;gap:6px;align-items:end}
-.mainrow{grid-template-columns:repeat(4,minmax(0,1fr));row-gap:7px}
+.mainrow{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:8px;row-gap:7px}
 .prices{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
 .field{min-width:0}
 .assetfield,.balancefield{width:100%;min-width:0}
@@ -51,9 +65,9 @@ button,input{font:inherit}
 .lotlabel{font-size:8px;color:var(--muted);font-weight:bold;letter-spacing:1.1px}
 .lot{font-size:23px;font-weight:bold;margin-top:3px;white-space:nowrap}
 .lot small{font-size:9px;color:var(--muted)}
-.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 5px}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 5px}
 .metric{min-width:0}
-.metric span{display:block;color:var(--muted);font-size:7px;line-height:1.15;min-height:16px;margin-bottom:2px}
+.metric span{display:block;color:var(--muted);font-size:7px;line-height:1.15;min-height:0;margin-bottom:0}
 .metric strong{font-size:9px;white-space:normal;overflow-wrap:anywhere}
 .copy{align-self:flex-start;height:27px;padding:0 9px;border:1px solid #eee;border-radius:5px;background:#eee;color:#111;font-weight:bold;font-size:9px;cursor:pointer}
 .msg,.foot{display:none}
@@ -65,7 +79,7 @@ button,input{font:inherit}
 .actions{display:flex;justify-content:flex-end;gap:6px;margin-top:8px}
 .secondary,.gear{border:1px solid var(--line);border-radius:5px;background:var(--p2);color:var(--txt);padding:5px 8px;cursor:pointer}
 .gear{padding:3px 6px;font-size:11px}
-/* Original 560px layout scales as one unit. Outer iframe background is transparent. */
+/* The widget keeps its original 560px layout and scales as one unit, up to 3x. The outer iframe remains transparent. */
 @media(max-width:560px){
  body{overflow-x:hidden}
 }
@@ -694,23 +708,19 @@ $("copy").onclick=async()=>{
 };
 
 function applyWidgetScale(){
- const app=document.querySelector(".app");
+ const app=$("app")||document.querySelector(".app");
  if(!app)return;
-
  const available=Math.max(1,document.documentElement.clientWidth-10);
  const scale=Math.min(3,Math.max(0.5,available/560));
-
  app.style.zoom=String(scale);
 }
 
-// Scale the complete calculator proportionally when the embed width changes.
+// Resize the whole calculator proportionally when the Notion embed changes width.
 applyWidgetScale();
-
 if(typeof ResizeObserver!=="undefined"){
  const widgetObserver=new ResizeObserver(applyWidgetScale);
  widgetObserver.observe(document.documentElement);
 }
-
 window.addEventListener("resize",applyWidgetScale);
 
 function init(){
