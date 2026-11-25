@@ -3,27 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
 <title>Position Size Calculator</title>
 <style>
-:root{--bg:#111216;--p:#191b20;--p2:#20232a;--line:#343842;--muted:#9299a4;--txt:#eef0f3;--green:#83c9a5;--red:#ef8888;--gold:#d8bd78}
+:root{--bg:#111216;--p:#191b20;--p2:#20232a;--line:#343842;--muted:#9299a4;--txt:#eef0f3;--green:#83c9a5;--red:#ef8888;--gold:#d8bd78;color-scheme:light dark;background:transparent!important}
 *{box-sizing:border-box}
-
-/* Transparent iframe/page area: only the calculator card is painted. */
-html,body{
- margin:0!important;
- padding:0!important;
- width:100%;
- min-height:0!important;
- background:transparent!important;
- background-color:transparent!important;
-}
-html{overflow-x:hidden}
-body{
- color:var(--txt);
- font:11px Arial,sans-serif;
- overflow-x:hidden;
- color-scheme:dark;
-}
+html,body{margin:0!important;padding:0!important;width:100%;min-height:0!important;background:transparent!important;background-color:transparent!important}
+html{overflow-x:hidden;color-scheme:light dark}
+body{color:var(--txt);font:11px Arial,sans-serif;overflow-x:hidden;color-scheme:light dark;background:transparent!important;background-color:transparent!important}
 .app{width:560px;max-width:none;margin:0 auto;padding:10px;background:var(--bg);border:1px solid #2b2e35;border-radius:12px;box-shadow:0 10px 28px #0005;transform-origin:top center}
 .top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
 .brand{font-size:10px;font-weight:bold;letter-spacing:1.35px}
