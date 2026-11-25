@@ -3,75 +3,448 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="dark">
 <title>Position Size Calculator</title>
 <style>
-:root{--bg:#111216;--p:#191b20;--p2:#20232a;--line:#343842;--muted:#9299a4;--txt:#eef0f3;--green:#83c9a5;--red:#ef8888;--gold:#d8bd78;color-scheme:light dark;background:transparent!important}
+:root{
+  --bg:#111216;
+  --p:#191b20;
+  --p2:#20232a;
+  --line:#343842;
+  --muted:#9299a4;
+  --txt:#eef0f3;
+  --green:#83c9a5;
+  --red:#ef8888;
+  --gold:#d8bd78;
+  color-scheme:dark;
+  background:#191919!important;
+}
+
 *{box-sizing:border-box}
-html,body{margin:0!important;padding:0!important;width:100%;min-height:0!important;background:transparent!important;background-color:transparent!important}
-html{overflow-x:hidden;color-scheme:light dark}
-body{color:var(--txt);font:11px Arial,sans-serif;overflow-x:hidden;color-scheme:light dark;background:transparent!important;background-color:transparent!important}
-.app{width:560px;max-width:none;margin:0 auto;padding:10px;background:var(--bg);border:1px solid #2b2e35;border-radius:12px;box-shadow:0 10px 28px #0005;transform-origin:top center}
-.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
-.brand{font-size:10px;font-weight:bold;letter-spacing:1.35px}
-.topright{display:flex;gap:7px;align-items:center}
-.status,.live{font-size:8px;color:var(--muted)}
+
+html,
+body{
+  margin:0!important;
+  padding:0!important;
+  width:100%;
+  min-height:100%;
+  background:#191919!important;
+  background-color:#191919!important;
+}
+
+html{
+  overflow-x:hidden;
+  color-scheme:dark;
+}
+
+body{
+  color:var(--txt);
+  font:11px Arial,sans-serif;
+  overflow-x:hidden;
+  color-scheme:dark;
+  background:#191919!important;
+  background-color:#191919!important;
+}
+
+.app{
+  width:560px;
+  max-width:none;
+  margin:0 auto;
+  padding:10px;
+  background:var(--bg);
+  border:1px solid #2b2e35;
+  border-radius:12px;
+  box-shadow:0 10px 28px #0005;
+  transform-origin:top center;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.brand{
+  font-size:10px;
+  font-weight:bold;
+  letter-spacing:1.35px;
+}
+
+.topright{
+  display:flex;
+  gap:7px;
+  align-items:center;
+}
+
+.status,
+.live{
+  font-size:8px;
+  color:var(--muted);
+}
+
 .status{display:none}
-button,input{font:inherit}
-.workspace{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,.95fr);gap:8px;align-items:stretch}
-.inputs-panel{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:8px}
-.row{display:grid;gap:6px;align-items:end}
-.mainrow{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:8px;row-gap:7px}
-.prices{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
-.field{min-width:0}
-.assetfield,.balancefield{width:100%;min-width:0}
-.riskfield{grid-column:1/-1}
-.label{display:flex;justify-content:space-between;gap:4px;margin:0 0 3px;color:var(--muted);font-size:7px;font-weight:bold;letter-spacing:.55px;text-transform:uppercase;white-space:nowrap}
-.control,.selectbtn{width:100%;height:27px;min-width:0;border:1px solid var(--line);border-radius:5px;background:var(--p);color:var(--txt);padding:0 5px;outline:none;font-size:10px}
-.control:focus,.selectbtn:focus{border-color:#818894}
-.currency-wrap{position:relative;width:100%}
-.currency-wrap .control{padding-right:19px}
-.currency-symbol{position:absolute;right:7px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:10px;line-height:1;pointer-events:none}
-.selectwrap{position:relative}
-.selectbtn{display:flex;align-items:center;justify-content:space-between;text-align:left;cursor:pointer;gap:3px}
-.chosen{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.drop{display:none;position:absolute;z-index:20;top:30px;left:0;width:min(300px,88vw);max-height:300px;overflow:auto;padding:7px;background:#1b1e24;border:1px solid #414651;border-radius:8px;box-shadow:0 12px 30px #000b}
+
+button,
+input{font:inherit}
+
+.workspace{
+  display:grid;
+  grid-template-columns:minmax(0,1.9fr) minmax(0,.95fr);
+  gap:8px;
+  align-items:stretch;
+}
+
+.inputs-panel{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:8px;
+}
+
+.row{
+  display:grid;
+  gap:6px;
+  align-items:end;
+}
+
+.mainrow{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  column-gap:8px;
+  row-gap:7px;
+}
+
+.prices{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:5px;
+}
+
+.field{
+  min-width:0;
+}
+
+.assetfield,
+.balancefield{
+  width:100%;
+  min-width:0;
+}
+
+.riskfield{
+  grid-column:1/-1;
+}
+
+.label{
+  display:flex;
+  justify-content:space-between;
+  gap:4px;
+  margin:0 0 3px;
+  color:var(--muted);
+  font-size:7px;
+  font-weight:bold;
+  letter-spacing:.55px;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+.control,
+.selectbtn{
+  width:100%;
+  height:27px;
+  min-width:0;
+  border:1px solid var(--line);
+  border-radius:5px;
+  background:var(--p);
+  color:var(--txt);
+  padding:0 5px;
+  outline:none;
+  font-size:10px;
+}
+
+.control:focus,
+.selectbtn:focus{
+  border-color:#818894;
+}
+
+.currency-wrap{
+  position:relative;
+  width:100%;
+}
+
+.currency-wrap .control{
+  padding-right:19px;
+}
+
+.currency-symbol{
+  position:absolute;
+  right:7px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  font-size:10px;
+  line-height:1;
+  pointer-events:none;
+}
+
+.selectwrap{
+  position:relative;
+}
+
+.selectbtn{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  text-align:left;
+  cursor:pointer;
+  gap:3px;
+}
+
+.chosen{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.drop{
+  display:none;
+  position:absolute;
+  z-index:20;
+  top:30px;
+  left:0;
+  width:min(300px,88vw);
+  max-height:300px;
+  overflow:auto;
+  padding:7px;
+  background:#1b1e24;
+  border:1px solid #414651;
+  border-radius:8px;
+  box-shadow:0 12px 30px #000b;
+}
+
 .drop.open{display:block}
-.search{width:100%;height:30px;margin-bottom:6px;background:#101217;color:white;border:1px solid var(--line);border-radius:6px;padding:0 8px}
-.group{padding:7px 5px 4px;color:#78818e;font-size:8px;font-weight:bold;letter-spacing:1px}
-.item{display:flex;justify-content:space-between;align-items:center;gap:7px;width:100%;padding:6px;border:0;border-radius:5px;background:transparent;color:var(--txt);text-align:left;cursor:pointer}
-.item:hover,.item.sel{background:#2a2e36}
-.star{border:0;background:none;color:#626a76;font-size:15px;cursor:pointer}
+
+.search{
+  width:100%;
+  height:30px;
+  margin-bottom:6px;
+  background:#101217;
+  color:white;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:0 8px;
+}
+
+.group{
+  padding:7px 5px 4px;
+  color:#78818e;
+  font-size:8px;
+  font-weight:bold;
+  letter-spacing:1px;
+}
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:7px;
+  width:100%;
+  padding:6px;
+  border:0;
+  border-radius:5px;
+  background:transparent;
+  color:var(--txt);
+  text-align:left;
+  cursor:pointer;
+}
+
+.item:hover,
+.item.sel{
+  background:#2a2e36;
+}
+
+.star{
+  border:0;
+  background:none;
+  color:#626a76;
+  font-size:15px;
+  cursor:pointer;
+}
+
 .star.on{color:var(--gold)}
-.risks{display:flex;gap:3px}
-.risk{flex:1;min-width:0;height:27px;padding:0 2px;border:1px solid var(--line);border-radius:5px;background:var(--p);color:#cbd0d7;cursor:pointer;font-size:9px}
-.risk.active{background:#e9ebee;color:#111318;font-weight:bold}
-.custom{width:42px;flex:0 0 42px;text-align:center;padding:0 2px}
-.refresh{border:0;background:none;color:#cbd0d7;cursor:pointer;padding:0 1px}
-.result{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:7px;margin:0;padding:8px;border:1px solid #373c46;border-radius:9px;background:linear-gradient(120deg,#1d2026,#17191e)}
-.lotlabel{font-size:8px;color:var(--muted);font-weight:bold;letter-spacing:1.1px}
-.lot{font-size:23px;font-weight:bold;margin-top:3px;white-space:nowrap}
-.lot small{font-size:9px;color:var(--muted)}
-.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 5px}
+
+.risks{
+  display:flex;
+  gap:3px;
+}
+
+.risk{
+  flex:1;
+  min-width:0;
+  height:27px;
+  padding:0 2px;
+  border:1px solid var(--line);
+  border-radius:5px;
+  background:var(--p);
+  color:#cbd0d7;
+  cursor:pointer;
+  font-size:9px;
+}
+
+.risk.active{
+  background:#e9ebee;
+  color:#111318;
+  font-weight:bold;
+}
+
+.custom{
+  width:42px;
+  flex:0 0 42px;
+  text-align:center;
+  padding:0 2px;
+}
+
+.refresh{
+  border:0;
+  background:none;
+  color:#cbd0d7;
+  cursor:pointer;
+  padding:0 1px;
+}
+
+.result{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:7px;
+  margin:0;
+  padding:8px;
+  border:1px solid #373c46;
+  border-radius:9px;
+  background:linear-gradient(120deg,#1d2026,#17191e);
+}
+
+.lotlabel{
+  font-size:8px;
+  color:var(--muted);
+  font-weight:bold;
+  letter-spacing:1.1px;
+}
+
+.lot{
+  font-size:23px;
+  font-weight:bold;
+  margin-top:3px;
+  white-space:nowrap;
+}
+
+.lot small{
+  font-size:9px;
+  color:var(--muted);
+}
+
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:5px 5px;
+}
+
 .metric{min-width:0}
-.metric span{display:block;color:var(--muted);font-size:7px;line-height:1.15;min-height:0;margin-bottom:0}
-.metric strong{font-size:9px;white-space:normal;overflow-wrap:anywhere}
-.copy{align-self:flex-start;height:27px;padding:0 9px;border:1px solid #eee;border-radius:5px;background:#eee;color:#111;font-weight:bold;font-size:9px;cursor:pointer}
-.msg,.foot{display:none}
-.settings{display:none;margin-top:9px;padding:10px;border:1px solid var(--line);border-radius:8px;background:#15171c}
+
+.metric span{
+  display:block;
+  color:var(--muted);
+  font-size:7px;
+  line-height:1.15;
+  min-height:0;
+  margin-bottom:0;
+}
+
+.metric strong{
+  font-size:9px;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+
+.copy{
+  align-self:flex-start;
+  height:27px;
+  padding:0 9px;
+  border:1px solid #eee;
+  border-radius:5px;
+  background:#eee;
+  color:#111;
+  font-weight:bold;
+  font-size:9px;
+  cursor:pointer;
+}
+
+.msg,
+.foot{display:none}
+
+.settings{
+  display:none;
+  margin-top:9px;
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#15171c;
+}
+
 .settings.open{display:block}
-.settingsgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:7px}
-.settings .label{font-size:6px;letter-spacing:.15px;white-space:normal;line-height:1.2;min-height:15px;align-items:flex-end}
-.note{margin-top:7px;color:var(--muted);font-size:9px;line-height:1.45}
-.actions{display:flex;justify-content:flex-end;gap:6px;margin-top:8px}
-.secondary,.gear{border:1px solid var(--line);border-radius:5px;background:var(--p2);color:var(--txt);padding:5px 8px;cursor:pointer}
-.gear{padding:3px 6px;font-size:11px}
-/* The widget keeps its original 560px layout and scales as one unit, up to 3x. The outer iframe remains transparent. */
+
+.settingsgrid{
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr 1fr;
+  gap:7px;
+}
+
+.settings .label{
+  font-size:6px;
+  letter-spacing:.15px;
+  white-space:normal;
+  line-height:1.2;
+  min-height:15px;
+  align-items:flex-end;
+}
+
+.note{
+  margin-top:7px;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.45;
+}
+
+.actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:6px;
+  margin-top:8px;
+}
+
+.secondary,
+.gear{
+  border:1px solid var(--line);
+  border-radius:5px;
+  background:var(--p2);
+  color:var(--txt);
+  padding:5px 8px;
+  cursor:pointer;
+}
+
+.gear{
+  padding:3px 6px;
+  font-size:11px;
+}
+
+/* The widget keeps its original 560px layout and scales as one unit, up to 3x. */
 @media(max-width:560px){
- body{overflow-x:hidden}
+  body{overflow-x:hidden}
 }
 </style>
 </head>
+
 <body>
 
 <div class="app">
@@ -299,7 +672,9 @@ const A=[
 ];
 
 let S={};
-try{S=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+try{
+  S=JSON.parse(localStorage.getItem(KEY)||"{}");
+}catch(e){}
 
 let firm=S.firm||"",
 asset=S.asset||"EURUSD",
