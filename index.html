@@ -104,6 +104,22 @@ input{font:inherit}
   gap:8px;
 }
 
+/* Subtle brand watermark beneath the input fields */
+.inputs-watermark{
+  margin-top:3px;
+  padding:3px 0 0;
+  color:#eef0f3;
+  opacity:.055;
+  font-size:27px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:7px;
+  text-align:center;
+  white-space:nowrap;
+  pointer-events:none;
+  user-select:none;
+}
+
 .row{
   display:grid;
   gap:6px;
@@ -535,6 +551,8 @@ input{font:inherit}
  </div>
 
 </div>
+
+<div class="inputs-watermark" aria-hidden="true">AGNOSTC</div>
 </div>
 
 <div class="result">
