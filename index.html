@@ -47,6 +47,7 @@ body{
 }
 
 .app{
+  position:relative;
   width:560px;
   max-width:none;
   margin:0 auto;
@@ -102,22 +103,35 @@ input{font:inherit}
   flex-direction:column;
   justify-content:center;
   gap:8px;
+  position:relative;
+  isolation:isolate;
 }
 
-/* Subtle brand watermark beneath the input fields */
+/* Large, subtle brand watermark layered across the input area */
 .inputs-watermark{
-  margin-top:3px;
-  padding:3px 0 0;
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2;
   color:#eef0f3;
-  opacity:.055;
-  font-size:27px;
+  opacity:.035;
+  font-family:"Arial Black", "Helvetica Neue", Arial, sans-serif;
+  font-size:52px;
   line-height:1;
-  font-weight:800;
+  font-weight:900;
   letter-spacing:7px;
+  transform:scaleY(2.4);
   text-align:center;
   white-space:nowrap;
   pointer-events:none;
   user-select:none;
+}
+
+.inputs-panel > .row{
+  position:relative;
+  z-index:1;
 }
 
 .row{
@@ -399,13 +413,20 @@ input{font:inherit}
 .msg,
 .foot{display:none}
 
+/* Settings overlay: opens above the calculator without changing its size */
 .settings{
   display:none;
-  margin-top:9px;
-  padding:10px;
-  border:1px solid var(--line);
-  border-radius:8px;
-  background:#15171c;
+  position:absolute;
+  top:42px;
+  left:10px;
+  right:10px;
+  z-index:50;
+  margin:0;
+  padding:12px;
+  border:1px solid #454b57;
+  border-radius:9px;
+  background:#171a20;
+  box-shadow:0 14px 34px #000d;
 }
 
 .settings.open{display:block}
@@ -552,7 +573,7 @@ input{font:inherit}
 
 </div>
 
-<div class="inputs-watermark" aria-hidden="true">AGNOSTC</div>
+<div class="inputs-watermark" aria-hidden="true">AGNOSTIC</div>
 </div>
 
 <div class="result">
